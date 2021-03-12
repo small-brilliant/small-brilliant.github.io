@@ -1,0 +1,227 @@
+/* 背景 */
+.layout_post>#post {
+    background: rgba(255,255,255,0);
+}
+#body-wrap {
+  background: -webkit-linear-gradient(
+    0deg,
+    rgba(247, 149, 51, 0.1) 0,
+    rgba(243, 112, 85, 0.1) 15%,
+    rgba(239, 78, 123, 0.1) 30%,
+    rgba(161, 102, 171, 0.1) 44%,
+    rgba(80, 115, 184, 0.1) 58%,
+    rgba(16, 152, 173, 0.1) 72%,
+    rgba(7, 179, 155, 0.1) 86%,
+    rgba(109, 186, 130, 0.1) 100%
+  );
+  background: -moz-linear-gradient(
+    0deg,
+    rgba(247, 149, 51, 0.1) 0,
+    rgba(243, 112, 85, 0.1) 15%,
+    rgba(239, 78, 123, 0.1) 30%,
+    rgba(161, 102, 171, 0.1) 44%,
+    rgba(80, 115, 184, 0.1) 58%,
+    rgba(16, 152, 173, 0.1) 72%,
+    rgba(7, 179, 155, 0.1) 86%,
+    rgba(109, 186, 130, 0.1) 100%
+  );
+  background: -o-linear-gradient(
+    0deg,
+    rgba(247, 149, 51, 0.1) 0,
+    rgba(243, 112, 85, 0.1) 15%,
+    rgba(239, 78, 123, 0.1) 30%,
+    rgba(161, 102, 171, 0.1) 44%,
+    rgba(80, 115, 184, 0.1) 58%,
+    rgba(16, 152, 173, 0.1) 72%,
+    rgba(7, 179, 155, 0.1) 86%,
+    rgba(109, 186, 130, 0.1) 100%
+  );
+  background: -ms-linear-gradient(
+    0deg,
+    rgba(247, 149, 51, 0.1) 0,
+    rgba(243, 112, 85, 0.1) 15%,
+    rgba(239, 78, 123, 0.1) 30%,
+    rgba(161, 102, 171, 0.1) 44%,
+    rgba(80, 115, 184, 0.1) 58%,
+    rgba(16, 152, 173, 0.1) 72%,
+    rgba(7, 179, 155, 0.1) 86%,
+    rgba(109, 186, 130, 0.1) 100%
+  );
+  background: linear-gradient(
+    90deg,
+    rgba(247, 149, 51, 0.1) 0,
+    rgba(243, 112, 85, 0.1) 15%,
+    rgba(239, 78, 123, 0.1) 30%,
+    rgba(161, 102, 171, 0.1) 44%,
+    rgba(80, 115, 184, 0.1) 58%,
+    rgba(16, 152, 173, 0.1) 72%,
+    rgba(7, 179, 155, 0.1) 86%,
+    rgba(109, 186, 130, 0.1) 100%
+  );
+}
+/* 页脚footer */
+/* 渐变色滚动动画 */
+@-webkit-keyframes Gradient {
+    0% {
+        background-position: 0 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0 50%;
+    }
+}
+
+@-moz-keyframes Gradient {
+    0% {
+        background-position: 0 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0 50%;
+    }
+}
+
+@keyframes Gradient {
+    0% {
+        background-position: 0 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0 50%;
+    }
+}
+#footer {
+    background: linear-gradient(-45deg, #ee7752, #ce3e75, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    -webkit-animation: Gradient 10s ease infinite;
+    -moz-animation: Gradient 10s ease infinite;
+    animation: Gradient 10s ease infinite;
+    -o-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+#footer:before {
+    background-color: rgba(0, 0, 0, 0);
+}
+/* 文章卡片，文章列表卡片，右侧info卡片 */
+#aside_content .card-widget,
+#recent-posts > .recent-post-item,
+.layout_post > #page,
+.layout_page > div:first-child:not(.recent-posts),
+.layout_post > #post,
+.read-mode .layout_post > #post {
+  background: var(--light_bg_color);
+}
+[data-theme="dark"] #nav,
+[data-theme="dark"] .layout_page > div:first-child:not(.recent-posts),
+[data-theme="dark"] .layout_post > #post {
+  background-color: var(--dark_bg_color);
+}
+span.inline-tag {
+  display: inline;
+  padding: 0.2em 0.6em 0.3em;
+  font-size: 90%;
+  font-weight: 400;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.1rem;
+  border-radius: 6px;
+  background-color: var(--Color);
+}
+
+p.red,
+span.red {
+  --Color: rgb(233, 30, 100);
+  --ColorA: rgba(233, 30, 100, 0.2);
+}
+
+p.green,
+span.green {
+  --Color: rgb(139, 195, 74);
+  --ColorA: rgba(139, 195, 74, 0.2);
+}
+
+p.blue,
+span.blue {
+  --Color: rgb(3, 169, 244);
+  --ColorA: rgba(3, 169, 244, 0.2);
+}
+
+p.yellow,
+span.yellow {
+  --Color: rgb(255, 193, 7);
+  --ColorA: rgba(255, 193, 7, 0.2);
+}
+
+p.grey,
+span.grey {
+  --Color: rgb(76, 76, 76);
+  --ColorA: rgba(76, 76, 76, 0.2);
+}
+
+p.log,
+span.log {
+  --Color: rgb(118,118,118);
+  --ColorA: rgba(118,118,118, 0.2);
+}
+
+p.div-border {
+  padding: 10px;
+  border: 1px solid var(--Color,#333);
+  border-radius: 0.4rem;
+  background-color: var(--ColorA, transparent);
+}
+
+p.left {
+  border-left-width: 5px;
+  border-left-color: var(--Color);
+}
+
+p.bottom {
+  border-bottom-width: 5px;
+  border-bottom-color: var(--Color);
+}
+
+p.right {
+  border-right-width: 5px;
+  border-right-color: var(--Color);
+}
+
+p.top {
+  border-top-width: 5px;
+  border-top-color: var(--Color);
+}
+
+.hide-block > a.hide-button.open,
+.hide-inline > a.hide-button.open {
+  display: inline-block;
+}
+
+.layout_post img {
+  display: inline-block;
+}
+
+.imgList li::before {
+  content: none !important;
+}
+/*卡片折叠*/
+
