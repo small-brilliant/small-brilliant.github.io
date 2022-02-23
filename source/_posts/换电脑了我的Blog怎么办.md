@@ -7,7 +7,7 @@ date: 2021-03-12 00:00:00
 keywords: 技巧
 ---
 
-一不小心换了电脑，一不小心忘记了还有我的`blog`。使用了`Hexo+github`搭建的`bolg`怎么使用`git`来同步文件呢？
+一不小心换了电脑，一不小心忘记了还有我的`blog`。使用了`Hexo+github`搭建的`blog`怎么使用`git`来同步文件呢？
 
 # 1.思路
 
@@ -15,7 +15,9 @@ keywords: 技巧
 
 这是我们可以利用`git`的分支管理，将源文件上传到`github`的另一分支，用这个分支来专门保存文件。
 
-# 2.上传操作
+# 2.源文件上传操作
+
+在`blog`仓库创建一个分支，专门用来存储`hexo`的一些文件。在换电脑的时候，只需要clone这些文件就可以愉快的写文章啦
 
 ## 2.1.建立分支
 
@@ -55,9 +57,11 @@ keywords: 技巧
 
 ![image-20210312232435711](https://cdn.jsdelivr.net/gh/small-brilliant/image/img1/20210312232435.png)
 
-结束！。
+结束！
 
 # 3.下载以及环境部署
+
+在另一台电脑上，如下操作
 
 1. 安装`git`和`node.js`
 
@@ -108,7 +112,7 @@ git config --global user.email "yourgithubemail"
    hexo s
    ```
 
-然后就可以开始写你的新博客了。每次写完都要把源文件上传一下。
+然后就可以开始写你的新博客了。每次写完都要把源文件上传一下。保持同步
 
 ```text
 git add .
@@ -121,6 +125,8 @@ git push
 ```text
 git pull
 ```
+
+写完博客用`hexo d`部署。
 
 # 参考
 
