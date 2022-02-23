@@ -2,7 +2,7 @@
 title: 换电脑了，可是我的Bolg怎么办？
 tags: 技巧分享
 categories: 学习记录
-cover: false
+cover: https://cdn.jsdelivr.net/gh/small-brilliant/image/img1/202202231031988.jpg
 date: 2021-03-12 00:00:00
 keywords: 技巧
 ---
