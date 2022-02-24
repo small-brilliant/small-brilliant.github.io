@@ -1,12 +1,14 @@
 ---
 title: 自然语言处理包——NLTK
 tags: NLP
-categories: 自然语言处理
+categories:
+- 自然语言处理
+- 库学习
 cover: false
 date: 2021-03-20 00:00:00
 keywords: 
-	-自然语言处理
-	-NLP
+	- 自然语言处理
+	- NLP
 ---
 
 # 1NLTK库安装

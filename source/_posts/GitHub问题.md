@@ -1,7 +1,9 @@
 ---
 title: Git 127.0.0.1:443端口拒绝连接？
 tags: 技巧分享
-categories: 学习记录
+categories: 
+- 学习记录
+- git
 cover: false
 date: 2021-03-12 00:00:00
 keywords: 技巧

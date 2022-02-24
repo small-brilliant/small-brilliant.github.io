@@ -1,5 +1,5 @@
 ---
-title: 换电脑了，可是我的Bolg怎么办？
+title: 换电脑了，可是我的Blog怎么办？
 tags: 技巧分享
 categories: 学习记录
 cover: https://cdn.jsdelivr.net/gh/small-brilliant/image/img1/202202231031988.jpg
@@ -63,54 +63,54 @@ keywords: 技巧
 
 在另一台电脑上，如下操作
 
-1. 安装`git`和`node.js`
+1.安装`git`和`node.js`
 
-2. 设置`git`全局邮箱和用户名
+设置`git`全局邮箱和用户名
 
 ```text
 git config --global user.name "yourgithubname"
 git config --global user.email "yourgithubemail"
 ```
 
-3. 设置`ssh key`。
+2.设置`ssh key`。
 
-   1. 输入下面命令，会在`C:\Users\hui\.ssh`生成公钥和私钥。
-
-      ```text
-      ssh-keygen -t rsa -C "youremail"
-      ```
-
-   2. 将公钥`id_rsa.pub`打开复制里面的内容粘贴到下面图所示的`key`文本框中
-
-      <img src="https://cdn.jsdelivr.net/gh/small-brilliant/image/img1/20210312233257.png" alt="屏幕截图 2021-03-12 233244" style="zoom:50%;" />
-
-      ![image-20210312233201949](https://cdn.jsdelivr.net/gh/small-brilliant/image/img1/20210312233202.png)
-
-4. 验证是否成功
+1. 输入下面命令，会在`C:\Users\hui\.ssh`生成公钥和私钥。
 
    ```text
-   ssh -T git@github.com
+   ssh-keygen -t rsa -C "youremail"
    ```
 
-5. 安装`hexo`但是不需要初始化。
+2. 将公钥`id_rsa.pub`打开复制里面的内容粘贴到下面图所示的`key`文本框中
 
-   ```text
-   npm install hexo-cli -g
-   ```
+   <img src="https://cdn.jsdelivr.net/gh/small-brilliant/image/img1/20210312233257.png" alt="屏幕截图 2021-03-12 233244" style="zoom:50%;" />
 
-6. 然后进入克隆到的文件夹。安装环境
+   ![image-20210312233201949](https://cdn.jsdelivr.net/gh/small-brilliant/image/img1/20210312233202.png)
 
-   ```text
-   npm install
-   npm install hexo-deployer-git --save
-   ```
+验证是否成功
 
-7. 验证
+```text
+ssh -T git@github.com
+```
 
-   ```text
-   hexo g
-   hexo s
-   ```
+3.安装`hexo`但是不需要初始化。
+
+```text
+npm install hexo-cli -g
+```
+
+4.然后进入克隆到的文件夹。安装环境
+
+```text
+npm install
+npm install hexo-deployer-git --save
+```
+
+5.验证
+
+```text
+hexo g
+hexo s
+```
 
 然后就可以开始写你的新博客了。每次写完都要把源文件上传一下。保持同步
 
@@ -122,11 +122,20 @@ git push
 
 如果是在已经编辑过的电脑上，已经有clone文件夹了，那么，每次只要和远端同步一下就行了。
 
-```text
+```
 git pull
 ```
 
-写完博客用`hexo d`部署。
+6.部署博客
+
+```
+hexo clean   # 清除缓存文件等，如果部署后没有反应，可以使用此命令
+#以后每次发布文章都是这两条命令。
+hexo g   # 生成页面
+hexo d   # 部署发布
+```
+
+   
 
 # 参考
 
