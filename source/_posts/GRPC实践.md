@@ -7,6 +7,7 @@ categories:
 - 后端
 cover: https://cdn.jsdelivr.net/gh/small-brilliant/image/img1/202202251345232.png
 date: 2022-02-25 19:42:25
+updated: 2022-02-25 19:42:25
 keywords: Go
 ---
 # GRPC实践
