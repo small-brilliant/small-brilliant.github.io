@@ -4,7 +4,7 @@ tags: 学习记录
 categories: 
 - 学习记录
 - 后端
-cover: https://images.pexels.com/photos/128234/pexels-photo-128234.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260
+cover: https://images.pexels.com/photos/38537/woodland-road-falling-leaf-natural-38537.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500
 date: 2022-03-02 12:52:17
 updated: 2022-03-02 12:52:20
 keywords: MongDB
