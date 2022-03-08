@@ -5,7 +5,7 @@ categories:
 - 学习记录
 - 后端
 - Docker
-cover: https://images.pexels.com/photos/128234/pexels-photo-128234.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260
+cover: https://i0.hippopx.com/photos/384/647/698/beaded-colour-pencils-in-the-water-air-bubbles-e7c732442fa6b2c185a89069f50abc3b.jpg
 date: 2022-03-02 12:52:17
 updated: 2022-03-02 12:52:20
 keywords: Docker
