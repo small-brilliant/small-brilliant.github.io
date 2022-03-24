@@ -482,3 +482,247 @@ func TestMain(m *testing.M) {
 }
 ```
 
+## 查询多个行程
+
+```go
+// GetTrips gets trips for the account by status.
+// If status is not specified, gets all trips for the account.
+func (m *Mongo) GetTrips(c context.Context, accountID id.AccountID, status rentalpb.TripStatus) ([]*TripRecord, error) {
+	filter := bson.M{
+		accountIdField: accountID.String(),
+	}
+	if status != rentalpb.TripStatus_TS_NOT_SPECIFIED {
+		filter[statusField] = status
+	}
+
+	res, err := m.col.Find(c, filter)
+	if err != nil {
+		return nil, err
+	}
+	var trips []*TripRecord
+	for res.Next(c) {
+		var trip TripRecord
+		err := res.Decode(&trip)
+		// 其中一行出错了的处理方式
+		if err != nil {
+			return nil, err
+		}
+		trips = append(trips, &trip)
+	}
+	return trips, nil
+}
+```
+
+### 测试
+
+```go
+func TestGetTrips(t *testing.T) {
+	rows := []struct {
+		id        string
+		accountID string
+		status    rentalpb.TripStatus
+	}{
+		{
+			id:        "632c60186800fc9e2ca1480d",
+			accountID: "account_id_for_get_trips",
+			status:    rentalpb.TripStatus_FINISHED,
+		},
+		{
+			id:        "642c60186800fc9e2ca1480d",
+			accountID: "account_id_for_get_trips",
+			status:    rentalpb.TripStatus_FINISHED,
+		},
+		{
+			id:        "652c60186800fc9e2ca1480d",
+			accountID: "account_id_for_get_trips",
+			status:    rentalpb.TripStatus_FINISHED,
+		},
+		{
+			id:        "682c60186800fc9e2ca1480d",
+			accountID: "account_id_for_get_trips",
+			status:    rentalpb.TripStatus_FINISHED,
+		},
+		{
+			id:        "662c60186800fc9e2ca1480d",
+			accountID: "account_id_for_get_trips",
+			status:    rentalpb.TripStatus_IN_PROGRES,
+		},
+		{
+			id:        "672c60186800fc9e2ca1480d",
+			accountID: "account_id_for_get_trips_1",
+			status:    rentalpb.TripStatus_IN_PROGRES,
+		},
+	}
+	c := context.Background()
+	mc, err := mongotesting.NewClient(c)
+	if err != nil {
+		t.Fatalf("cannot connect mongodb : %v", err)
+	}
+	m := NewMongo(mc.Database("coolcar"))
+	for _, r := range rows {
+		mgo.NewObjIDWithValue(id.TripID(r.id))
+		_, err := m.CreateTrip(c, &rentalpb.Trip{
+			AccountID: r.accountID,
+			Status:    r.status,
+		})
+		if err != nil {
+			t.Fatalf("cannot create rows : %v", err)
+		}
+
+	}
+
+	cases := []struct {
+		name       string
+		accountID  string
+		status     rentalpb.TripStatus
+		wantCount  int
+		wantOnlyID string
+	}{
+		{
+			name:      "get_all",
+			accountID: "account_id_for_get_trips",
+			status:    rentalpb.TripStatus_TS_NOT_SPECIFIED,
+			wantCount: 5,
+		},
+		{
+			name:      "get_in_progress",
+			accountID: "account_id_for_get_trips",
+			status:    rentalpb.TripStatus_IN_PROGRES,
+			wantCount: 1,
+		},
+	}
+
+	for _, cc := range cases {
+		t.Run(cc.name, func(t *testing.T) {
+			tr, err := m.GetTrips(context.Background(), id.AccountID(cc.accountID), cc.status)
+			if err != nil {
+				t.Errorf("cannot get trips: %v", err)
+			}
+			if cc.wantCount != len(tr) {
+				t.Errorf("incorrect result count:want:%d,got:%d", cc.wantCount, len(tr))
+			}
+			if cc.wantOnlyID != "" && len(tr) > 0 {
+				if cc.wantOnlyID != tr[0].ID.Hex() {
+					t.Errorf("only_id incorrect;want:%q,got:%q", cc.wantOnlyID, tr[0].ID.Hex())
+				}
+			}
+		})
+	}
+}
+```
+
+# 行程跟新
+
+## 乐观锁
+
+使用updatedAt字段来表示锁，update只有和mongo中相同才可以更新。实际代码中，需要update这个字段去查找数据
+
+```go
+func (m *Mongo) UpdateTrip(c context.Context, tripid id.TripID, accountID id.AccountID, updatedAt int64, trip *rentalpb.Trip) error {
+	objID, err := objid.FromID(tripid)
+	if err != nil {
+		return fmt.Errorf("invalid id : %v", err)
+	}
+	newUpdatedAt := mgo.UpdateAt()
+	res, err := m.col.UpdateOne(c, bson.M{
+		mgo.IDFieldName:        objID,
+		accountIdField:         accountID.String(),
+		mgo.UpdatedAtFieldName: updatedAt,
+	}, mgo.Set(bson.M{
+		tripField:              trip,
+		mgo.UpdatedAtFieldName: newUpdatedAt,
+	}))
+	if err != nil {
+		return err
+	}
+	if res.MatchedCount == 0 {
+		return mongo.ErrNoDocuments
+	}
+	return nil
+}
+```
+
+## 测试
+
+```go
+func TestUpdateTrip(t *testing.T) {
+	c := context.Background()
+	mc, err := mongotesting.NewClient(c)
+	if err != nil {
+		t.Fatalf("cannot connect mongodb:%v", err)
+	}
+	m := NewMongo(mc.Database("coolcar"))
+	tid := id.TripID("662c60186800fc9e2ca1480d")
+	var now int64 = 10000
+	mgo.NewObjIDWithValue(tid)
+	mgo.UpdateAt = func() int64 {
+		return now
+	}
+	aid := id.AccountID("account_for_update")
+	tr, err := m.CreateTrip(c, &rentalpb.Trip{
+		AccountID: aid.String(),
+		Status:    rentalpb.TripStatus_IN_PROGRES,
+		Start: &rentalpb.LocationStatus{
+			PoiName: "start_poi",
+		},
+	})
+	if err != nil {
+		t.Fatalf("cannot create trip:%v", err)
+	}
+	if tr.UpdatedAt != 10000 {
+		t.Fatalf("wrong updateat;want:10000,got:%d", tr.UpdatedAt)
+	}
+	update := &rentalpb.Trip{
+		AccountID: aid.String(),
+		Status:    rentalpb.TripStatus_IN_PROGRES,
+		Start: &rentalpb.LocationStatus{
+			PoiName: "start_poi_updated",
+		},
+	}
+	cases := []struct {
+		name           string
+		now            int64
+		withUppdatedAt int64
+		wantErr        bool
+	}{
+		{
+			name:           "normal_update",
+			now:            20000,
+			withUppdatedAt: 10000,
+		},
+		{
+			name:           "update_with_stale_timestamp",
+			now:            30000,
+			withUppdatedAt: 10000,
+			wantErr:        true,
+		},
+		{
+			name:           "update_with_refetch",
+			now:            40000,
+			withUppdatedAt: 20000,
+		},
+	}
+
+	for _, cc := range cases {
+		// 用case的now替代mgo.updatedAt
+		now = cc.now
+		err := m.UpdateTrip(c, tid, aid, cc.withUppdatedAt, update)
+		if cc.wantErr {
+			if err == nil {
+				t.Errorf("%s:want error: got none", cc.name)
+			} else {
+				continue
+			}
+		}
+		updatedTrip, err := m.GetTrip(c, tid, aid)
+		if err != nil {
+			t.Errorf("%s:cannot get trip after update:%v", cc.name, err)
+		}
+		if cc.now != updatedTrip.UpdatedAt {
+			t.Errorf("%s:incorrect updatedat:want %d,got %d", cc.name, cc.now, updatedTrip.UpdatedAt)
+		}
+
+	}
+}
+```
+

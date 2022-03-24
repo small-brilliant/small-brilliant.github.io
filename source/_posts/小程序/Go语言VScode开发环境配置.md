@@ -7,6 +7,7 @@ categories:
 - 后端
 cover: https://cdn.jsdelivr.net/gh/small-brilliant/image/img1/202202241448220.png
 date: 2022-02-24 15:19:00
+updated: 2022-02-24 15:19:00
 keywords: Go
 ---
 # 配置国内镜像
