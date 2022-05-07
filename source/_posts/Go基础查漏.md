@@ -4,7 +4,7 @@ tags: 学习记录
 categories: 
 - 学习记录
 - Go
-cover: https://cdn.jsdelivr.net/gh/small-brilliant/image/img1/202202241448220.png
+cover: https://image-1302243118.cos.ap-beijing.myqcloud.com/public/img/banner/exam-banner.jpg
 date: 2022-03-24 19:28:08
 updated: 2022-03-24 19:28:44
 keywords: Go
@@ -320,5 +320,175 @@ func main() {
 	}()
 	select {}
 }
+```
+
+# 协程顺序执行问题
+
+使用三个协程，每秒打印cat、dog、fish，顺序不能变化（协程1打印cat、协程2打印dog、协程3打印fish）
+
+如果取值和放入值对调，会产生死锁
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
+func cat(fishCH, catCH chan struct{}, wg *sync.WaitGroup) {
+	wg.Add(1)
+	go func() {
+		for {
+			fmt.Println("cat")
+			catCH <- struct{}{}
+			<-fishCH
+		}
+		wg.Done()
+	}()
+}
+
+func dog(catCH, dogCH chan struct{}, wg *sync.WaitGroup) {
+	wg.Add(1)
+	go func() {
+		for {
+			<-catCH
+			fmt.Println("dog")
+			dogCH <- struct{}{}
+		}
+		wg.Done()
+	}()
+}
+
+func fish(dogCH, fishCH chan struct{}, wg *sync.WaitGroup) {
+	wg.Add(1)
+	go func() {
+		for {
+			<-dogCH
+			fmt.Println("fish")
+			time.Sleep(time.Second)
+			fishCH <- struct{}{}
+		}
+		wg.Done()
+	}()
+}
+
+func main() {
+	catCH := make(chan struct{})
+	dogCH := make(chan struct{})
+	fishCH := make(chan struct{})
+	wg := sync.WaitGroup{}
+	cat(fishCH, catCH, &wg)
+	dog(catCH, dogCH, &wg)
+	fish(dogCH, fishCH, &wg)
+	wg.Wait()
+}
+```
+
+# tag原理
+
+反射的原理
+
+功能很强大，但是会消耗性能
+
+```go
+package main
+
+import (
+	"fmt"
+	"reflect"
+)
+
+type UserInfo struct {
+	Name     string `bilibili:"BILIBILI_NAME"`
+	PublicWX string `bilibili:"BILIBILIB_PUBLICWX"`
+}
+
+func PrintTag(prt interface{}) {
+	reType := reflect.TypeOf(prt)
+	if reType.Kind() != reflect.Ptr || reType.Elem().Kind() != reflect.Struct {
+		panic("传入的参数不是结构体和指针")
+		return
+	}
+	v := reflect.ValueOf(prt).Elem()
+	fmt.Println("v:", v)
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Type().Field(i)
+		tag := field.Tag
+		labelTag := tag.Get("bilibili")
+		fmt.Println("", labelTag)
+	}
+}
+
+func main() {
+	usrInfo := &UserInfo{
+		Name:     "原生驿站",
+		PublicWX: "publicWX",
+	}
+	PrintTag(usrInfo)
+}
+```
+
+# 为什么需要response.Body.Close()
+
+如果在解析Body的时候中断了，Body就没有办法读到`EOF`信号，也就意味着Body不会被清空掉，http请求就浪费了。
+
+# 线程回收的问题
+
+Golang不会回收线程，这个问题官方还没有解决（2022.1.9）
+
+强制回收线程：将gorouting强制绑定在线程上面，gorouting在退出的时候没有解锁这个线程，这个线程就会被操作系统终止
+
+```go
+runtime.LockOSThread()
+```
+
+# 指针
+
+下面代码的输出
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	var a int = 1
+	var b *int = &a
+	var c **int = &b
+	var x int = *b
+	fmt.Println("a = ", a)
+	fmt.Println("&a = ", &a)
+	fmt.Println("*&a = ", *&a)
+	fmt.Println("b = ", b)
+	fmt.Println("&b = ", &b)
+	fmt.Println("*&b = ", *&b)
+	fmt.Println("*b = ", *b)
+	fmt.Println("c = ", c)
+	fmt.Println("*c = ", *c)
+	fmt.Println("&c = ", &c)
+	fmt.Println("*&c = ", *&c)
+	fmt.Println("**c = ", **c)
+	fmt.Println("***&*&*&*&c = ", ***&*&*&*&*&c)
+	fmt.Println("x = ", x)
+}
+```
+
+```go
+a =  1
+&a =  0xc0000aa058
+*&a =  1
+b =  0xc0000aa058
+&b =  0xc0000ce018
+*&b =  0xc0000aa058
+*b =  1
+c =  0xc0000ce018
+*c =  0xc0000aa058
+&c =  0xc0000ce020
+*&c =  0xc0000ce018
+**c =  1
+***&*&*&*&c =  1
+x =  1
 ```
 
